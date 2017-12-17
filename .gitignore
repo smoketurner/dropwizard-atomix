@@ -1,0 +1,8 @@
+.DS_Store
+.classpath
+.project
+.settings
+target
+release.properties
+atomix-example/data
+dependency-reduced-pom.xml

@@ -1,0 +1,36 @@
+template: ${helloworld/template:-Hello, %s!}
+defaultName: ${helloworld/defaultName:-Stranger}
+
+# Atomix-specific options.
+atomix:
+  localNode:
+    id: node3
+    endpoint: 127.0.0.1:10002
+    type: data
+  bootstrapNodes:
+    - endpoint: 127.0.0.1:10000
+
+# HTTP-specific options.
+server:
+
+  type: simple
+  applicationContextPath: /
+  connector:
+    type: http
+    port: 0
+
+  requestLog:
+    appenders:
+      - type: console
+        timeZone: UTC
+        target: stdout
+
+logging:
+  level: INFO
+  loggers:
+    com.smoketurner.dropwizard.atomix: DEBUG
+    com.example.helloworld: DEBUG
+  appenders:
+    - type: console
+      timeZone: UTC
+      target: stdout
