@@ -17,6 +17,7 @@ package com.smoketurner.dropwizard.atomix;
 
 import java.util.Objects;
 import javax.annotation.Nonnull;
+import com.smoketurner.dropwizard.atomix.health.AtomixHealthCheck;
 import com.smoketurner.dropwizard.atomix.managed.AtomixManager;
 import io.atomix.Atomix;
 import io.dropwizard.Configuration;
@@ -53,5 +54,7 @@ public abstract class AtomixBundle<C extends Configuration>
 
         final Atomix atomix = factory.build();
         environment.lifecycle().manage(new AtomixManager(atomix));
+        environment.healthChecks().register("atomix",
+                new AtomixHealthCheck(atomix));
     }
 }
