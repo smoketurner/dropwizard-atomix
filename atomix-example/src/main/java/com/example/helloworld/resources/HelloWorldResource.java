@@ -15,9 +15,10 @@
  */
 package com.example.helloworld.resources;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -25,8 +26,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import com.codahale.metrics.annotation.Timed;
 import com.example.helloworld.api.Saying;
+import com.smoketurner.dropwizard.atomix.AtomixNode;
 import io.atomix.Atomix;
-import io.atomix.cluster.Node;
 
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -55,7 +56,9 @@ public class HelloWorldResource {
     @GET
     @Timed
     @Path("/cluster/nodes")
-    public Set<Node> getClusterNodes() {
-        return atomix.cluster().getNodes();
+    public List<AtomixNode> getClusterNodes() {
+        return atomix.cluster().getNodes().stream()
+                .map(n -> AtomixNode.builder().fromNode(n).build())
+                .collect(Collectors.toList());
     }
 }

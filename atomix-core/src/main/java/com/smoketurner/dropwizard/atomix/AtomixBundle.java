@@ -17,8 +17,6 @@ package com.smoketurner.dropwizard.atomix;
 
 import java.util.Objects;
 import javax.annotation.Nonnull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.smoketurner.dropwizard.atomix.managed.AtomixManager;
 import io.atomix.Atomix;
 import io.dropwizard.Configuration;
@@ -29,8 +27,6 @@ import io.dropwizard.setup.Environment;
 public abstract class AtomixBundle<C extends Configuration>
         implements ConfiguredBundle<C>, AtomixConfiguration<C> {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(AtomixBundle.class);
     private final String clusterName;
 
     /**
@@ -52,18 +48,10 @@ public abstract class AtomixBundle<C extends Configuration>
     public void run(final C configuration, final Environment environment)
             throws Exception {
 
-        LOGGER.info("start run()");
-
         final AtomixFactory factory = getAtomixFactory(configuration);
-
-        LOGGER.info("Setting Atomix cluster name to: {}", clusterName);
         factory.setClusterName(clusterName);
 
         final Atomix atomix = factory.build();
-
-        LOGGER.info("registering manager");
         environment.lifecycle().manage(new AtomixManager(atomix));
-
-        LOGGER.info("end run()");
     }
 }

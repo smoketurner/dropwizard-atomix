@@ -91,7 +91,7 @@ public class AtomixFactory {
     @JsonProperty
     public Node getLocalNode() {
         if (localNode != null) {
-            return localNode.build();
+            return localNode.toNode();
         }
         return null;
     }
@@ -103,7 +103,7 @@ public class AtomixFactory {
 
     @JsonProperty
     public Collection<Node> getBootstrapNodes() {
-        return bootstrapNodes.stream().map(n -> n.build())
+        return bootstrapNodes.stream().map(n -> n.toNode())
                 .collect(Collectors.toList());
     }
 
@@ -157,13 +157,12 @@ public class AtomixFactory {
 
     @JsonIgnore
     public Atomix build() {
-        LOGGER.info("start build()");
-
         final Atomix existingAtomix = atomixRef.get();
         if (existingAtomix != null) {
-            LOGGER.info("Returning existing instance");
             return existingAtomix;
         }
+
+        LOGGER.info("Atomix Cluster Name: {}", clusterName);
 
         final Node localNode = getLocalNode();
 
@@ -174,20 +173,21 @@ public class AtomixFactory {
         }
 
         if (numCoordinationPartitions > 0) {
-            // builder.withCoordinationPartitions(numCoordinationPartitions);
+            builder.withCoordinationPartitions(numCoordinationPartitions);
         }
         if (!bootstrapNodes.isEmpty()) {
             builder.withBootstrapNodes(getBootstrapNodes());
         }
 
-        // builder.withBootstrapNodes(getBootstrapNodes())
-        // .withCoordinationPartitionSize(coordinationPartitionSize)
-        // .withDataPartitions(numDataPartitions)
-        // .withDataDirectory(getDataDirectory());
+        builder.withCoordinationPartitionSize(coordinationPartitionSize)
+                .withDataPartitions(numDataPartitions);
+
+        final File dataDirectory = getDataDirectory();
+        LOGGER.info("Raft Data Directory: {}", dataDirectory);
+        builder.withDataDirectory(dataDirectory);
 
         final Atomix atomix = builder.build();
         if (atomixRef.compareAndSet(null, atomix)) {
-            LOGGER.info("Returning new instance");
             return atomix;
         }
         return build();

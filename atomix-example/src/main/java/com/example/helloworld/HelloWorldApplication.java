@@ -15,8 +15,6 @@
  */
 package com.example.helloworld;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.example.helloworld.resources.HelloWorldResource;
 import com.smoketurner.dropwizard.atomix.AtomixBundle;
 import com.smoketurner.dropwizard.atomix.AtomixFactory;
@@ -27,9 +25,6 @@ import io.dropwizard.setup.Environment;
 
 public class HelloWorldApplication
         extends Application<HelloWorldConfiguration> {
-
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(HelloWorldApplication.class);
 
     public static void main(String[] args) throws Exception {
         new HelloWorldApplication().run(args);
@@ -56,14 +51,10 @@ public class HelloWorldApplication
     public void run(HelloWorldConfiguration configuration,
             Environment environment) throws Exception {
 
-        LOGGER.info("start run()");
         final Atomix atomix = configuration.getAtomix().build();
 
-        LOGGER.info("registering resource");
         final HelloWorldResource resource = new HelloWorldResource(atomix,
                 configuration.getTemplate(), configuration.getDefaultName());
         environment.jersey().register(resource);
-
-        LOGGER.info("end run()");
     }
 }

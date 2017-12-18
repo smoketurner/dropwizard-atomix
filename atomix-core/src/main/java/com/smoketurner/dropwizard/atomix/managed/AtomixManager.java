@@ -40,7 +40,7 @@ public class AtomixManager implements Managed {
 
     @Override
     public void start() throws Exception {
-        LOGGER.info("Starting Atomix...");
+        LOGGER.info("Starting Atomix (will block until quorum is reached)...");
         atomix.start().join();
         LOGGER.info("Started Atomix");
     }

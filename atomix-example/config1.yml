@@ -8,7 +8,13 @@ atomix:
     endpoint: 127.0.0.1:10000
     type: data
   bootstrapNodes:
-    - endpoint: 127.0.0.1:10000
+    - id: node1
+      endpoint: 127.0.0.1:10000
+    - id: node2
+      endpoint: 127.0.0.1:10001
+    - id: node3
+      endpoint: 127.0.0.1:10002
+  dataDirectory: ./data1
 
 # HTTP-specific options.
 server:
@@ -30,6 +36,7 @@ logging:
   loggers:
     com.smoketurner.dropwizard.atomix: DEBUG
     com.example.helloworld: DEBUG
+    io.atomix: INFO
   appenders:
     - type: console
       timeZone: UTC
