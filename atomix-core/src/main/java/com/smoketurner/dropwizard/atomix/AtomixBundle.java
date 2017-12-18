@@ -19,6 +19,8 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.smoketurner.dropwizard.atomix.managed.AtomixManager;
+import io.atomix.Atomix;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
@@ -57,8 +59,10 @@ public abstract class AtomixBundle<C extends Configuration>
         LOGGER.info("Setting Atomix cluster name to: {}", clusterName);
         factory.setClusterName(clusterName);
 
-        // LOGGER.info("Registering manager");
-        // environment.lifecycle().manage(new AtomixManager(factory));
+        final Atomix atomix = factory.build();
+
+        LOGGER.info("registering manager");
+        environment.lifecycle().manage(new AtomixManager(atomix));
 
         LOGGER.info("end run()");
     }

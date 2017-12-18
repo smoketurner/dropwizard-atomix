@@ -15,6 +15,7 @@
  */
 package com.example.helloworld.resources;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.ws.rs.GET;
@@ -24,7 +25,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import com.codahale.metrics.annotation.Timed;
 import com.example.helloworld.api.Saying;
-import com.google.common.base.Optional;
 import io.atomix.Atomix;
 import io.atomix.cluster.Node;
 
@@ -48,7 +48,7 @@ public class HelloWorldResource {
     @Timed
     @Path("/hello-world")
     public Saying sayHello(@QueryParam("name") Optional<String> name) {
-        final String value = String.format(template, name.or(defaultName));
+        final String value = String.format(template, name.orElse(defaultName));
         return new Saying(counter.incrementAndGet(), value);
     }
 
@@ -56,6 +56,6 @@ public class HelloWorldResource {
     @Timed
     @Path("/cluster/nodes")
     public Set<Node> getClusterNodes() {
-        return atomix.getClusterService().getNodes();
+        return atomix.cluster().getNodes();
     }
 }

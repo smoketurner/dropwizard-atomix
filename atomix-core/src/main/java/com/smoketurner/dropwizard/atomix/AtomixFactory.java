@@ -19,7 +19,6 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
@@ -37,7 +36,7 @@ public class AtomixFactory {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(AtomixFactory.class);
-    private final AtomicReference<CompletableFuture<Atomix>> atomixRef = new AtomicReference<>();
+    private final AtomicReference<Atomix> atomixRef = new AtomicReference<>();
 
     /**
      * Sets the cluster name
@@ -157,11 +156,12 @@ public class AtomixFactory {
     }
 
     @JsonIgnore
-    public CompletableFuture<Atomix> build() {
+    public Atomix build() {
         LOGGER.info("start build()");
-        final CompletableFuture<Atomix> existingAtomix = atomixRef.get();
+
+        final Atomix existingAtomix = atomixRef.get();
         if (existingAtomix != null) {
-            LOGGER.info("end build(): Returning existing Atomix reference");
+            LOGGER.info("Returning existing instance");
             return existingAtomix;
         }
 
@@ -172,23 +172,24 @@ public class AtomixFactory {
         if (localNode != null) {
             builder.withLocalNode(localNode);
         }
+
         if (numCoordinationPartitions > 0) {
             // builder.withCoordinationPartitions(numCoordinationPartitions);
         }
-
-        builder.withBootstrapNodes(getBootstrapNodes())
-                // .withCoordinationPartitionSize(coordinationPartitionSize)
-                // .withDataPartitions(numDataPartitions)
-                .withDataDirectory(getDataDirectory());
-
-        final CompletableFuture<Atomix> atomix = builder.buildAsync();
-        if (atomixRef.compareAndSet(null, atomix)) {
-            LOGGER.info("end build(): Returning new Atomix reference");
-            return atomix;
+        if (!bootstrapNodes.isEmpty()) {
+            builder.withBootstrapNodes(getBootstrapNodes());
         }
 
-        LOGGER.info(
-                "end build(): reference was already set, calling build() again");
+        // builder.withBootstrapNodes(getBootstrapNodes())
+        // .withCoordinationPartitionSize(coordinationPartitionSize)
+        // .withDataPartitions(numDataPartitions)
+        // .withDataDirectory(getDataDirectory());
+
+        final Atomix atomix = builder.build();
+        if (atomixRef.compareAndSet(null, atomix)) {
+            LOGGER.info("Returning new instance");
+            return atomix;
+        }
         return build();
     }
 }

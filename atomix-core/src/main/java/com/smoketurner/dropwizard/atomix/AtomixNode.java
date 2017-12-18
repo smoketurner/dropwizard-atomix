@@ -1,6 +1,6 @@
 package com.smoketurner.dropwizard.atomix;
 
-import javax.annotation.Nullable;
+import java.util.UUID;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -8,15 +8,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.net.HostAndPort;
 import io.atomix.cluster.Node;
 import io.atomix.cluster.Node.Type;
-import io.atomix.cluster.NodeId;
 import io.atomix.messaging.Endpoint;
 import io.atomix.messaging.impl.NettyMessagingService;
 import io.dropwizard.validation.OneOf;
 
 public class AtomixNode {
 
-    @Nullable
-    private String id;
+    @NotEmpty
+    private String id = UUID.randomUUID().toString();
 
     @NotNull
     private HostAndPort endpoint = HostAndPort.fromParts("127.0.0.1",
@@ -26,14 +25,13 @@ public class AtomixNode {
     @OneOf({ "client", "data" })
     private String type = "data";
 
-    @Nullable
     @JsonProperty
     public String getId() {
         return id;
     }
 
     @JsonProperty
-    public void setId(@Nullable String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -65,12 +63,7 @@ public class AtomixNode {
 
     @JsonIgnore
     public Node build() {
-        final Node.Builder builder = Node.builder();
-        if (id != null) {
-            builder.withId(NodeId.from(id));
-        }
-        final Node node = builder.withEndpoint(getEndpoint())
-                .withType(getType()).build();
-        return node;
+        return Node.builder(id).withEndpoint(getEndpoint()).withType(getType())
+                .build();
     }
 }
