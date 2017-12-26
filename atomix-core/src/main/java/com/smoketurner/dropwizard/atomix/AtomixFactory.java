@@ -29,8 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.atomix.Atomix;
 import io.atomix.cluster.Node;
+import io.atomix.core.Atomix;
 
 public class AtomixFactory {
 

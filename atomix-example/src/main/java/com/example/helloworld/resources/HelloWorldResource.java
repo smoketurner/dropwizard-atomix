@@ -27,7 +27,7 @@ import javax.ws.rs.core.MediaType;
 import com.codahale.metrics.annotation.Timed;
 import com.example.helloworld.api.Saying;
 import com.smoketurner.dropwizard.atomix.AtomixNode;
-import io.atomix.Atomix;
+import io.atomix.core.Atomix;
 
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -57,7 +57,7 @@ public class HelloWorldResource {
     @Timed
     @Path("/cluster/nodes")
     public List<AtomixNode> getClusterNodes() {
-        return atomix.cluster().getNodes().stream()
+        return atomix.clusterService().getNodes().stream()
                 .map(n -> AtomixNode.builder().fromNode(n).build())
                 .collect(Collectors.toList());
     }

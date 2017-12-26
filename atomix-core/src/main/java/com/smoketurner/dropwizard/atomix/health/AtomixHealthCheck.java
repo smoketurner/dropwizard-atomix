@@ -18,7 +18,7 @@ package com.smoketurner.dropwizard.atomix.health;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import com.codahale.metrics.health.HealthCheck;
-import io.atomix.Atomix;
+import io.atomix.core.Atomix;
 import io.dropwizard.util.Duration;
 
 public class AtomixHealthCheck extends HealthCheck {

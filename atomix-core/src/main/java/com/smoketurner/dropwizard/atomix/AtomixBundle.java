@@ -19,7 +19,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import com.smoketurner.dropwizard.atomix.health.AtomixHealthCheck;
 import com.smoketurner.dropwizard.atomix.managed.AtomixManager;
-import io.atomix.Atomix;
+import io.atomix.core.Atomix;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;

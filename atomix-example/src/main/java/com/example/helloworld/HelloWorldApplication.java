@@ -18,7 +18,7 @@ package com.example.helloworld;
 import com.example.helloworld.resources.HelloWorldResource;
 import com.smoketurner.dropwizard.atomix.AtomixBundle;
 import com.smoketurner.dropwizard.atomix.AtomixFactory;
-import io.atomix.Atomix;
+import io.atomix.core.Atomix;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
