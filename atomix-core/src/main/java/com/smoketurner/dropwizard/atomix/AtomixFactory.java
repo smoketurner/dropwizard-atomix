@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
@@ -53,7 +54,17 @@ public class AtomixFactory {
     private List<AtomixNode> bootstrapNodes = Collections.emptyList();
 
     /**
-     * Sets the coordination (Raft) partition size.
+     * Default to 7 Raft partitions to allow a leader per node in 7 node
+     * clusters
+     *
+     * @see {@link Atomix.Builder.DEFAULT_COORDINATION_PARTITIONS}
+     */
+    @Min(1)
+    private int numCoordinationPartitions = 7;
+
+    /**
+     * Default to 3-node partitions for the best latency/throughput per Raft
+     * partition
      *
      * @see {@link Atomix.Builder.DEFAULT_COORDINATION_PARTITION_SIZE}
      */
@@ -61,13 +72,8 @@ public class AtomixFactory {
     private int coordinationPartitionSize = 3;
 
     /**
-     * Sets the number of coordination (Raft) partitions.
-     */
-    @Min(0)
-    private int numCoordinationPartitions = 0;
-
-    /**
-     * Sets the number of data partitions.
+     * Default to 71 primary-backup partitions - a prime number that creates
+     * about 10 partitions per node in a 7-node cluster
      *
      * @see {@link Atomix.Builder.DEFAULT_DATA_PARTITIONS}
      */
@@ -87,13 +93,9 @@ public class AtomixFactory {
         this.clusterName = name;
     }
 
-    @Nullable
     @JsonProperty
-    public Node getLocalNode() {
-        if (localNode != null) {
-            return localNode.toNode();
-        }
-        return null;
+    public Optional<Node> getLocalNode() {
+        return Optional.ofNullable(localNode).map(n -> n.toNode());
     }
 
     @JsonProperty
@@ -164,23 +166,15 @@ public class AtomixFactory {
 
         LOGGER.info("Atomix Cluster Name: {}", clusterName);
 
-        final Node localNode = getLocalNode();
-
         final Atomix.Builder builder = Atomix.builder()
-                .withClusterName(clusterName);
-        if (localNode != null) {
-            builder.withLocalNode(localNode);
-        }
+                .withClusterName(clusterName)
+                .withCoordinationPartitions(numCoordinationPartitions)
+                .withCoordinationPartitionSize(coordinationPartitionSize)
+                .withDataPartitions(numDataPartitions)
+                .withBootstrapNodes(getBootstrapNodes());
 
-        if (numCoordinationPartitions > 0) {
-            builder.withCoordinationPartitions(numCoordinationPartitions);
-        }
-        if (!bootstrapNodes.isEmpty()) {
-            builder.withBootstrapNodes(getBootstrapNodes());
-        }
-
-        builder.withCoordinationPartitionSize(coordinationPartitionSize)
-                .withDataPartitions(numDataPartitions);
+        final Optional<Node> localNode = getLocalNode();
+        localNode.ifPresent(node -> builder.withLocalNode(node));
 
         final File dataDirectory = getDataDirectory();
         LOGGER.info("Raft Data Directory: {}", dataDirectory);

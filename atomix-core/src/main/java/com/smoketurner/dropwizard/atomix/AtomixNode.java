@@ -21,6 +21,7 @@ import io.dropwizard.validation.OneOf;
 
 @Immutable
 public final class AtomixNode {
+    private static final String DEFAULT_TYPE = "data";
 
     @NotEmpty
     private final String id;
@@ -38,7 +39,7 @@ public final class AtomixNode {
             @JsonProperty("type") Optional<String> type) {
         this.id = id;
         this.endpoint = endpoint;
-        this.type = type.orElse("data");
+        this.type = type.orElse(DEFAULT_TYPE);
     }
 
     private AtomixNode(Builder builder) {
@@ -59,7 +60,7 @@ public final class AtomixNode {
         private String id = UUID.randomUUID().toString();
         private HostAndPort endpoint = HostAndPort.fromParts("127.0.0.1",
                 NettyMessagingService.DEFAULT_PORT);
-        private String type = "data";
+        private String type = DEFAULT_TYPE;
 
         public Builder fromNode(Node node) {
             id(node.id());
