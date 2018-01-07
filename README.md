@@ -55,6 +55,36 @@ This project is available on Maven Central. To add it to your project simply add
 </dependency>
 ```
 
+Example Application
+-------------------
+
+To try the example application, checkout the code from Github then build the example hello world application.
+
+```
+git clone https://github.com/smoketurner/dropwizard-atomix.git
+cd dropwizard-atomix
+./mvnw compile package
+cd atomix-example
+```
+
+You then need to open 3 separate terminal windows to launch 3 instances of the application:
+
+```
+java -jar target/atomix-example-1.2.0-1-SNAPSHOT.jar server config1.yml
+java -jar target/atomix-example-1.2.0-1-SNAPSHOT.jar server config2.yml
+java -jar target/atomix-example-1.2.0-1-SNAPSHOT.jar server config3.yml
+```
+
+Once a quorum has been reached, Jetty will start up as normal on a random port which you'll be able to see in the logs.
+
+```
+INFO  [2018-01-07 15:29:43,489] org.eclipse.jetty.server.handler.ContextHandler: Started i.d.j.MutableServletContextHandler@2ad99cf3{/admin,null,AVAILABLE}
+INFO  [2018-01-07 15:29:43,494] org.eclipse.jetty.server.AbstractConnector: Started hello-world@554f0dfb{HTTP/1.1,[http/1.1]}{0.0.0.0:55419}
+INFO  [2018-01-07 15:29:43,494] org.eclipse.jetty.server.Server: Started @13775ms
+```
+
+You can then visit `http://localhost:55419/hello-world` to see the Dropwizard [Getting Started](http://www.dropwizard.io/1.2.2/docs/getting-started.html) example, but using a distributed counter across the cluster.
+
 Support
 -------
 
