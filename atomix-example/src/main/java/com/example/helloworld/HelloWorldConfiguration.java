@@ -32,7 +32,7 @@ public class HelloWorldConfiguration extends Configuration {
 
     @NotNull
     @Valid
-    public final AtomixFactory atomix = new AtomixFactory();
+    private final AtomixFactory atomix = new AtomixFactory();
 
     @JsonProperty
     public String getTemplate() {
