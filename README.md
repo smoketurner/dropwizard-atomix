@@ -51,7 +51,7 @@ This project is available on Maven Central. To add it to your project simply add
 <dependency>
     <groupId>com.smoketurner.dropwizard</groupId>
     <artifactId>atomix-core</artifactId>
-    <version>1.2.0-1-SNAPSHOT</version>
+    <version>1.2.3-1</version>
 </dependency>
 ```
 
@@ -70,9 +70,9 @@ cd atomix-example
 You then need to open 3 separate terminal windows to launch 3 instances of the application:
 
 ```
-java -jar target/atomix-example-1.2.0-1-SNAPSHOT.jar server config1.yml
-java -jar target/atomix-example-1.2.0-1-SNAPSHOT.jar server config2.yml
-java -jar target/atomix-example-1.2.0-1-SNAPSHOT.jar server config3.yml
+java -jar target/atomix-example-1.2.3-2-SNAPSHOT.jar server config1.yml
+java -jar target/atomix-example-1.2.3-2-SNAPSHOT.jar server config2.yml
+java -jar target/atomix-example-1.2.3-2-SNAPSHOT.jar server config3.yml
 ```
 
 Once a quorum has been reached, Jetty will start up as normal on a random port which you'll be able to see in the logs.
