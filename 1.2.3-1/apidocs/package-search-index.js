@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"com.smoketurner.dropwizard.atomix"},{"l":"com.smoketurner.dropwizard.atomix.health"},{"l":"com.smoketurner.dropwizard.atomix.managed"}]
