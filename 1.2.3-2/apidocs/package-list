@@ -1,0 +1,3 @@
+com.smoketurner.dropwizard.atomix
+com.smoketurner.dropwizard.atomix.health
+com.smoketurner.dropwizard.atomix.managed
