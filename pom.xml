@@ -7,7 +7,7 @@
 
     <groupId>com.smoketurner.dropwizard</groupId>
     <artifactId>dropwizard-atomix</artifactId>
-    <version>1.2.3-2-SNAPSHOT</version>
+    <version>1.2.3-2</version>
     <packaging>pom</packaging>
 
     <name>Dropwizard Atomix</name>
@@ -26,7 +26,7 @@
         <developerConnection>scm:git:git@github.com:smoketurner/dropwizard-atomix.git</developerConnection>
         <connection>scm:git:https://github.com/smoketurner/dropwizard-atomix.git</connection>
         <url>https://github.com/smoketurner/dropwizard-atomix</url>
-        <tag>HEAD</tag>
+        <tag>v1.2.3-2</tag>
     </scm>
 
     <ciManagement>
