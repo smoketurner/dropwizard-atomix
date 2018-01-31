@@ -4,6 +4,7 @@ Dropwizard Atomix
 [![Coverage Status](https://coveralls.io/repos/github/smoketurner/dropwizard-atomix/badge.svg?branch=master)](https://coveralls.io/github/smoketurner/dropwizard-atomix?branch=master)
 [![Maven Central](https://img.shields.io/maven-central/v/com.smoketurner.dropwizard/dropwizard-atomix.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/com.smoketurner.dropwizard/dropwizard-atomix/)
 [![GitHub license](https://img.shields.io/github/license/smoketurner/dropwizard-atomix.svg?style=flat-square)](https://github.com/smoketurner/dropwizard-atomix/tree/master)
+[![Become a Patron](https://img.shields.io/badge/Patron-Patreon-red.svg)](https://www.patreon.com/jplock)
 
 A bundle for integrating [Atomix](http://atomix.io/atomix/) in Dropwizard applications.
 
