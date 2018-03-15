@@ -52,7 +52,7 @@ This project is available on Maven Central. To add it to your project simply add
 <dependency>
     <groupId>com.smoketurner.dropwizard</groupId>
     <artifactId>atomix-core</artifactId>
-    <version>1.2.3-2</version>
+    <version>1.3.0-1</version>
 </dependency>
 ```
 
@@ -71,9 +71,9 @@ cd atomix-example
 You then need to open 3 separate terminal windows to launch 3 instances of the application:
 
 ```
-java -jar target/atomix-example-1.2.3-3-SNAPSHOT.jar server config1.yml
-java -jar target/atomix-example-1.2.3-3-SNAPSHOT.jar server config2.yml
-java -jar target/atomix-example-1.2.3-3-SNAPSHOT.jar server config3.yml
+java -jar target/atomix-example-1.3.0-2-SNAPSHOT.jar server config1.yml
+java -jar target/atomix-example-1.3.0-2-SNAPSHOT.jar server config2.yml
+java -jar target/atomix-example-1.3.0-2-SNAPSHOT.jar server config3.yml
 ```
 
 Once a quorum has been reached, Jetty will start up as normal on a random port which you'll be able to see in the logs.
@@ -84,7 +84,7 @@ INFO  [2018-01-07 15:29:43,494] org.eclipse.jetty.server.AbstractConnector: Star
 INFO  [2018-01-07 15:29:43,494] org.eclipse.jetty.server.Server: Started @13775ms
 ```
 
-You can then visit `http://localhost:55419/hello-world` to see the Dropwizard [Getting Started](http://www.dropwizard.io/1.2.2/docs/getting-started.html) example, but using a distributed counter across the cluster.
+You can then visit `http://localhost:55419/hello-world` to see the Dropwizard [Getting Started](http://www.dropwizard.io/1.3.0/docs/getting-started.html) example, but using a distributed counter across the cluster.
 
 Support
 -------
