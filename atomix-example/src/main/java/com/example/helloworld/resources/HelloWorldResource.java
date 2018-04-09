@@ -29,7 +29,6 @@ import com.example.helloworld.api.Saying;
 import com.smoketurner.dropwizard.atomix.AtomixNode;
 import io.atomix.core.Atomix;
 import io.atomix.core.counter.AtomicCounter;
-import io.atomix.primitive.Persistence;
 
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -38,6 +37,13 @@ public class HelloWorldResource {
     private final String template;
     private final String defaultName;
 
+    /**
+     * Constructor
+     *
+     * @param atomix
+     * @param template
+     * @param defaultName
+     */
     public HelloWorldResource(Atomix atomix, String template,
             String defaultName) {
         this.atomix = Objects.requireNonNull(atomix);
@@ -50,7 +56,7 @@ public class HelloWorldResource {
     @Path("/hello-world")
     public Saying sayHello(@QueryParam("name") Optional<String> name) {
         final AtomicCounter counter = atomix.atomicCounterBuilder("counter")
-                .withPersistence(Persistence.EPHEMERAL).build();
+                .build();
 
         final String value = String.format(template, name.orElse(defaultName));
         return new Saying(counter.incrementAndGet(), value);

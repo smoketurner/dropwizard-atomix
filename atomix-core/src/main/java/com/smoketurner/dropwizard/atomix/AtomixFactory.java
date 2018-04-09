@@ -57,19 +57,19 @@ public class AtomixFactory {
      * Default to 7 Raft partitions to allow a leader per node in 7 node
      * clusters
      *
-     * @see {@link Atomix.Builder.DEFAULT_COORDINATION_PARTITIONS}
+     * @see {@link Atomix.Builder.DEFAULT_CORE_PARTITIONS}
      */
     @Min(1)
-    private int numCoordinationPartitions = 7;
+    private int corePartitions = 7;
 
     /**
      * Default to 3-node partitions for the best latency/throughput per Raft
      * partition
      *
-     * @see {@link Atomix.Builder.DEFAULT_COORDINATION_PARTITION_SIZE}
+     * @see {@link Atomix.Builder.DEFAULT_CORE_PARTITION_SIZE}
      */
     @Min(1)
-    private int coordinationPartitionSize = 3;
+    private int corePartitionSize = 3;
 
     /**
      * Default to 71 primary-backup partitions - a prime number that creates
@@ -78,7 +78,7 @@ public class AtomixFactory {
      * @see {@link Atomix.Builder.DEFAULT_DATA_PARTITIONS}
      */
     @Min(1)
-    private int numDataPartitions = 71;
+    private int dataPartitions = 71;
 
     @Nullable
     private String dataDirectory;
@@ -115,33 +115,33 @@ public class AtomixFactory {
     }
 
     @JsonProperty
-    public int getNumCoordinationPartitions() {
-        return numCoordinationPartitions;
+    public int getCorePartitions() {
+        return corePartitions;
     }
 
     @JsonProperty
-    public void setNumCoordinationPartitions(int corePartitions) {
-        this.numCoordinationPartitions = corePartitions;
+    public void setCorePartitions(int corePartitions) {
+        this.corePartitions = corePartitions;
     }
 
     @JsonProperty
-    public int getCoordinationPartitionSize() {
-        return coordinationPartitionSize;
+    public int getCorePartitionSize() {
+        return corePartitionSize;
     }
 
     @JsonProperty
-    public void setCoordinationPartitionSize(int size) {
-        this.coordinationPartitionSize = size;
+    public void setCorePartitionSize(int size) {
+        this.corePartitionSize = size;
     }
 
     @JsonProperty
-    public int getNumDataPartitions() {
-        return numDataPartitions;
+    public int getDataPartitions() {
+        return dataPartitions;
     }
 
     @JsonProperty
-    public void setNumDataPartitions(int dataPartitions) {
-        this.numDataPartitions = dataPartitions;
+    public void setDataPartitions(int dataPartitions) {
+        this.dataPartitions = dataPartitions;
     }
 
     @JsonProperty
@@ -167,10 +167,9 @@ public class AtomixFactory {
         LOGGER.info("Atomix Cluster Name: {}", clusterName);
 
         final Atomix.Builder builder = Atomix.builder()
-                .withClusterName(clusterName)
-                .withCoordinationPartitions(numCoordinationPartitions)
-                .withCoordinationPartitionSize(coordinationPartitionSize)
-                .withDataPartitions(numDataPartitions)
+                .withClusterName(clusterName).withCorePartitions(corePartitions)
+                .withCorePartitionSize(corePartitionSize)
+                .withDataPartitions(dataPartitions)
                 .withBootstrapNodes(getBootstrapNodes());
 
         final Optional<Node> localNode = getLocalNode();

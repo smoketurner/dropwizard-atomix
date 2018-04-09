@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.atomix.core.Atomix;
 import io.dropwizard.lifecycle.Managed;
+import io.dropwizard.util.Duration;
 
 public class AtomixManager implements Managed {
 
@@ -41,8 +42,14 @@ public class AtomixManager implements Managed {
     @Override
     public void start() throws Exception {
         LOGGER.info("Starting Atomix (will block until quorum is reached)...");
+
+        final long startTime = System.nanoTime();
         atomix.start().join();
-        LOGGER.info("Started Atomix");
+        final Duration duration = Duration
+                .nanoseconds(System.nanoTime() - startTime);
+
+        LOGGER.info("Started Atomix and reached quorum in {}ms",
+                duration.toMilliseconds());
     }
 
     @Override

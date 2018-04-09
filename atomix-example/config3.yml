@@ -6,7 +6,7 @@ atomix:
   localNode:
     id: node3
     endpoint: 127.0.0.1:10002
-    type: data
+    type: core
   bootstrapNodes:
     - id: node1
       endpoint: 127.0.0.1:10000
