@@ -3,18 +3,16 @@ defaultName: ${helloworld/defaultName:-Stranger}
 
 # Atomix-specific options.
 atomix:
-  localNode:
+  localMember:
     id: node2
-    endpoint: 127.0.0.1:10001
-    type: core
-  bootstrapNodes:
+    address: 127.0.0.1:10001
+  members:
     - id: node1
-      endpoint: 127.0.0.1:10000
+      address: 127.0.0.1:10000
     - id: node2
-      endpoint: 127.0.0.1:10001
+      address: 127.0.0.1:10001
     - id: node3
-      endpoint: 127.0.0.1:10002
-  dataDirectory: ./data2
+      address: 127.0.0.1:10002
 
 # HTTP-specific options.
 server:

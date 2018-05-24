@@ -1,6 +1,5 @@
 package com.smoketurner.dropwizard.atomix;
 
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -12,26 +11,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.google.common.net.HostAndPort;
-import io.atomix.cluster.Node;
-import io.atomix.cluster.Node.Type;
-import io.atomix.cluster.NodeId;
-import io.atomix.messaging.Endpoint;
-import io.atomix.messaging.impl.NettyMessagingService;
-import io.dropwizard.validation.OneOf;
+import io.atomix.cluster.Member;
+import io.atomix.cluster.MemberId;
+import io.atomix.utils.net.Address;
 
 @Immutable
-public final class AtomixNode {
-    private static final String DEFAULT_TYPE = "core";
+public final class AtomixMember {
+    private static final int DEFAULT_PORT = 5679;
 
     @NotEmpty
     private final String id;
 
     @NotNull
-    private final HostAndPort endpoint;
-
-    @NotEmpty
-    @OneOf({ "core", "client", "data" })
-    private final String type;
+    private final HostAndPort address;
 
     @NotNull
     private final Optional<String> zone;
@@ -43,30 +35,27 @@ public final class AtomixNode {
     private final Optional<String> host;
 
     @JsonCreator
-    private AtomixNode(@JsonProperty("id") String id,
-            @JsonProperty("endpoint") HostAndPort endpoint,
-            @JsonProperty("type") Optional<String> type,
+    private AtomixMember(@JsonProperty("id") String id,
+            @JsonProperty("address") HostAndPort address,
             @JsonProperty("zone") Optional<String> zone,
             @JsonProperty("rack") Optional<String> rack,
             @JsonProperty("host") Optional<String> host) {
         this.id = id;
-        this.endpoint = endpoint;
-        this.type = type.orElse(DEFAULT_TYPE);
+        this.address = address;
         this.zone = zone;
         this.rack = rack;
         this.host = host;
     }
 
-    private AtomixNode(Builder builder) {
+    private AtomixMember(Builder builder) {
         this.id = builder.id;
-        this.endpoint = builder.endpoint;
-        this.type = builder.type;
+        this.address = builder.address;
         this.zone = builder.zone;
         this.rack = builder.rack;
         this.host = builder.host;
     }
 
-    public static AtomixNode create() {
+    public static AtomixMember create() {
         return builder().build();
     }
 
@@ -76,20 +65,18 @@ public final class AtomixNode {
 
     public static class Builder {
         private String id = UUID.randomUUID().toString();
-        private HostAndPort endpoint = HostAndPort.fromParts("127.0.0.1",
-                NettyMessagingService.DEFAULT_PORT);
-        private String type = DEFAULT_TYPE;
+        private HostAndPort address = HostAndPort.fromParts("127.0.0.1",
+                DEFAULT_PORT);
         private Optional<String> zone = Optional.empty();
         private Optional<String> rack = Optional.empty();
         private Optional<String> host = Optional.empty();
 
-        public Builder fromNode(Node node) {
-            withId(node.id());
-            withType(node.type());
-            withEndpoint(node.endpoint());
-            withZone(node.zone());
-            withRack(node.rack());
-            withHost(node.host());
+        public Builder fromMember(Member member) {
+            withId(member.id());
+            withAddress(member.address());
+            withZone(member.zone());
+            withRack(member.rack());
+            withHost(member.host());
             return this;
         }
 
@@ -98,34 +85,24 @@ public final class AtomixNode {
             return this;
         }
 
-        public Builder withId(NodeId id) {
+        public Builder withId(MemberId id) {
             this.id = id.id();
             return this;
         }
 
-        public Builder withEndpoint(HostAndPort endpoint) {
-            this.endpoint = Objects.requireNonNull(endpoint);
+        public Builder withAddress(HostAndPort address) {
+            this.address = Objects.requireNonNull(address);
             return this;
         }
 
-        public Builder withEndpoint(Endpoint endpoint) {
-            this.endpoint = HostAndPort.fromParts(
-                    endpoint.host().getHostAddress(), endpoint.port());
+        public Builder withAddress(Address address) {
+            this.address = HostAndPort.fromParts(address.host(),
+                    address.port());
             return this;
         }
 
-        public Builder withEndpoint(String host, int port) {
-            this.endpoint = HostAndPort.fromParts(host, port);
-            return this;
-        }
-
-        public Builder withType(String type) {
-            this.type = Objects.requireNonNull(type);
-            return this;
-        }
-
-        public Builder withType(Type type) {
-            this.type = type.toString();
+        public Builder withAddress(String host, int port) {
+            this.address = HostAndPort.fromParts(host, port);
             return this;
         }
 
@@ -144,8 +121,8 @@ public final class AtomixNode {
             return this;
         }
 
-        public AtomixNode build() {
-            return new AtomixNode(this);
+        public AtomixMember build() {
+            return new AtomixMember(this);
         }
     }
 
@@ -155,13 +132,8 @@ public final class AtomixNode {
     }
 
     @JsonProperty
-    public HostAndPort getEndpoint() {
-        return endpoint;
-    }
-
-    @JsonProperty
-    public String getType() {
-        return type;
+    public HostAndPort getAddress() {
+        return address;
     }
 
     @JsonProperty
@@ -180,11 +152,9 @@ public final class AtomixNode {
     }
 
     @JsonIgnore
-    public Node toNode() {
-        return Node.builder(id)
-                .withEndpoint(
-                        Endpoint.from(endpoint.getHost(), endpoint.getPort()))
-                .withType(Type.valueOf(type.toUpperCase(Locale.ENGLISH)))
+    public Member toMember() {
+        return Member.builder(id)
+                .withAddress(Address.from(address.getHost(), address.getPort()))
                 .withZone(zone.orElse(null)).withRack(rack.orElse(null))
                 .withHost(host.orElse(null)).build();
     }
@@ -198,7 +168,7 @@ public final class AtomixNode {
             return false;
         }
 
-        final AtomixNode other = (AtomixNode) obj;
+        final AtomixMember other = (AtomixMember) obj;
         return Objects.equals(id, other.id);
     }
 
@@ -210,7 +180,7 @@ public final class AtomixNode {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).add("id", id)
-                .add("endpoint", endpoint).add("type", type).add("zone", zone)
-                .add("rack", rack).add("host", host).toString();
+                .add("address", address).add("zone", zone).add("rack", rack)
+                .add("host", host).toString();
     }
 }

@@ -15,7 +15,6 @@
  */
 package com.smoketurner.dropwizard.atomix;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -23,14 +22,13 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.atomix.cluster.Node;
+import io.atomix.cluster.Member;
 import io.atomix.core.Atomix;
 
 public class AtomixFactory {
@@ -48,40 +46,10 @@ public class AtomixFactory {
     private String clusterName = "atomix";
 
     @Nullable
-    private AtomixNode localNode;
+    private AtomixMember localMember;
 
     @NotNull
-    private List<AtomixNode> bootstrapNodes = Collections.emptyList();
-
-    /**
-     * Default to 7 Raft partitions to allow a leader per node in 7 node
-     * clusters
-     *
-     * @see {@link Atomix.Builder.DEFAULT_CORE_PARTITIONS}
-     */
-    @Min(1)
-    private int corePartitions = 7;
-
-    /**
-     * Default to 3-node partitions for the best latency/throughput per Raft
-     * partition
-     *
-     * @see {@link Atomix.Builder.DEFAULT_CORE_PARTITION_SIZE}
-     */
-    @Min(1)
-    private int corePartitionSize = 3;
-
-    /**
-     * Default to 71 primary-backup partitions - a prime number that creates
-     * about 10 partitions per node in a 7-node cluster
-     *
-     * @see {@link Atomix.Builder.DEFAULT_DATA_PARTITIONS}
-     */
-    @Min(1)
-    private int dataPartitions = 71;
-
-    @Nullable
-    private String dataDirectory;
+    private List<AtomixMember> members = Collections.emptyList();
 
     @JsonProperty
     public String getClusterName() {
@@ -94,67 +62,24 @@ public class AtomixFactory {
     }
 
     @JsonProperty
-    public Optional<Node> getLocalNode() {
-        return Optional.ofNullable(localNode).map(n -> n.toNode());
+    public Optional<Member> getLocalMember() {
+        return Optional.ofNullable(localMember).map(n -> n.toMember());
     }
 
     @JsonProperty
-    public void setLocalNode(@Nullable AtomixNode node) {
-        this.localNode = node;
+    public void setLocalMember(@Nullable AtomixMember member) {
+        this.localMember = member;
     }
 
     @JsonProperty
-    public Collection<Node> getBootstrapNodes() {
-        return bootstrapNodes.stream().map(n -> n.toNode())
+    public Collection<Member> getMembers() {
+        return members.stream().map(n -> n.toMember())
                 .collect(Collectors.toList());
     }
 
     @JsonProperty
-    public void setBootstrapNodes(List<AtomixNode> nodes) {
-        this.bootstrapNodes = nodes;
-    }
-
-    @JsonProperty
-    public int getCorePartitions() {
-        return corePartitions;
-    }
-
-    @JsonProperty
-    public void setCorePartitions(int corePartitions) {
-        this.corePartitions = corePartitions;
-    }
-
-    @JsonProperty
-    public int getCorePartitionSize() {
-        return corePartitionSize;
-    }
-
-    @JsonProperty
-    public void setCorePartitionSize(int size) {
-        this.corePartitionSize = size;
-    }
-
-    @JsonProperty
-    public int getDataPartitions() {
-        return dataPartitions;
-    }
-
-    @JsonProperty
-    public void setDataPartitions(int dataPartitions) {
-        this.dataPartitions = dataPartitions;
-    }
-
-    @JsonProperty
-    public File getDataDirectory() {
-        if (dataDirectory == null) {
-            return new File(System.getProperty("user.dir"), "data");
-        }
-        return new File(dataDirectory);
-    }
-
-    @JsonProperty
-    public void setDataDirectory(String directory) {
-        this.dataDirectory = directory;
+    public void setMembers(List<AtomixMember> members) {
+        this.members = members;
     }
 
     @JsonIgnore
@@ -167,17 +92,10 @@ public class AtomixFactory {
         LOGGER.info("Atomix Cluster Name: {}", clusterName);
 
         final Atomix.Builder builder = Atomix.builder()
-                .withClusterName(clusterName).withCorePartitions(corePartitions)
-                .withCorePartitionSize(corePartitionSize)
-                .withDataPartitions(dataPartitions)
-                .withBootstrapNodes(getBootstrapNodes());
+                .withClusterName(clusterName).withMembers(getMembers());
 
-        final Optional<Node> localNode = getLocalNode();
-        localNode.ifPresent(node -> builder.withLocalNode(node));
-
-        final File dataDirectory = getDataDirectory();
-        LOGGER.info("Raft Data Directory: {}", dataDirectory);
-        builder.withDataDirectory(dataDirectory);
+        final Optional<Member> localMember = getLocalMember();
+        localMember.ifPresent(member -> builder.withLocalMember(member));
 
         final Atomix atomix = builder.build();
         if (atomixRef.compareAndSet(null, atomix)) {
