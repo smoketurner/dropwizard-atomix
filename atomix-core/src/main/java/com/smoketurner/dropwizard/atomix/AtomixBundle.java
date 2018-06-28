@@ -1,11 +1,11 @@
-/**
- * Copyright 2018 Smoke Turner, LLC.
+/*
+ * Copyright © 2018 Smoke Turner, LLC (contact@smoketurner.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,8 +15,6 @@
  */
 package com.smoketurner.dropwizard.atomix;
 
-import java.util.Objects;
-import javax.annotation.Nonnull;
 import com.smoketurner.dropwizard.atomix.health.AtomixHealthCheck;
 import com.smoketurner.dropwizard.atomix.managed.AtomixManager;
 import io.atomix.core.Atomix;
@@ -24,37 +22,36 @@ import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import java.util.Objects;
+import javax.annotation.Nonnull;
 
 public abstract class AtomixBundle<C extends Configuration>
-        implements ConfiguredBundle<C>, AtomixConfiguration<C> {
+    implements ConfiguredBundle<C>, AtomixConfiguration<C> {
 
-    private final String clusterName;
+  private final String clusterName;
 
-    /**
-     * Constructor
-     *
-     * @param clusterName
-     *            Atomix cluster name
-     */
-    public AtomixBundle(@Nonnull final String clusterName) {
-        this.clusterName = Objects.requireNonNull(clusterName);
-    }
+  /**
+   * Constructor
+   *
+   * @param clusterName Atomix cluster name
+   */
+  public AtomixBundle(@Nonnull final String clusterName) {
+    this.clusterName = Objects.requireNonNull(clusterName);
+  }
 
-    @Override
-    public void initialize(Bootstrap<?> bootstrap) {
-        // nothing to initialize
-    }
+  @Override
+  public void initialize(Bootstrap<?> bootstrap) {
+    // nothing to initialize
+  }
 
-    @Override
-    public void run(final C configuration, final Environment environment)
-            throws Exception {
+  @Override
+  public void run(final C configuration, final Environment environment) throws Exception {
 
-        final AtomixFactory factory = getAtomixFactory(configuration);
-        factory.setClusterName(clusterName);
+    final AtomixFactory factory = getAtomixFactory(configuration);
+    factory.setClusterName(clusterName);
 
-        final Atomix atomix = factory.build();
-        environment.lifecycle().manage(new AtomixManager(atomix));
-        environment.healthChecks().register("atomix",
-                new AtomixHealthCheck(atomix));
-    }
+    final Atomix atomix = factory.build();
+    environment.lifecycle().manage(new AtomixManager(atomix));
+    environment.healthChecks().register("atomix", new AtomixHealthCheck(atomix));
+  }
 }
