@@ -1,11 +1,11 @@
-/**
- * Copyright 2018 Smoke Turner, LLC.
+/*
+ * Copyright © 2018 Smoke Turner, LLC (contact@smoketurner.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,38 +23,35 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
-public class HelloWorldApplication
-        extends Application<HelloWorldConfiguration> {
+public class HelloWorldApplication extends Application<HelloWorldConfiguration> {
 
-    public static void main(String[] args) throws Exception {
-        new HelloWorldApplication().run(args);
-    }
+  public static void main(String[] args) throws Exception {
+    new HelloWorldApplication().run(args);
+  }
 
-    @Override
-    public String getName() {
-        return "hello-world";
-    }
+  @Override
+  public String getName() {
+    return "hello-world";
+  }
 
-    @Override
-    public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
-        bootstrap.addBundle(
-                new AtomixBundle<HelloWorldConfiguration>(getName()) {
-                    @Override
-                    public AtomixFactory getAtomixFactory(
-                            HelloWorldConfiguration configuration) {
-                        return configuration.getAtomix();
-                    }
-                });
-    }
+  @Override
+  public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
+    bootstrap.addBundle(
+        new AtomixBundle<HelloWorldConfiguration>(getName()) {
+          @Override
+          public AtomixFactory getAtomixFactory(HelloWorldConfiguration configuration) {
+            return configuration.getAtomix();
+          }
+        });
+  }
 
-    @Override
-    public void run(HelloWorldConfiguration configuration,
-            Environment environment) throws Exception {
+  @Override
+  public void run(HelloWorldConfiguration configuration, Environment environment) throws Exception {
 
-        final Atomix atomix = configuration.getAtomix().build();
+    final Atomix atomix = configuration.getAtomix().build();
 
-        final HelloWorldResource resource = new HelloWorldResource(atomix,
-                configuration.getTemplate(), configuration.getDefaultName());
-        environment.jersey().register(resource);
-    }
+    final HelloWorldResource resource =
+        new HelloWorldResource(atomix, configuration.getTemplate(), configuration.getDefaultName());
+    environment.jersey().register(resource);
+  }
 }
