@@ -1,7 +1,6 @@
 Dropwizard Atomix
 =================
 [![Build Status](https://travis-ci.org/smoketurner/dropwizard-atomix.svg?branch=master)](https://travis-ci.org/smoketurner/dropwizard-atomix)
-[![Coverage Status](https://coveralls.io/repos/github/smoketurner/dropwizard-atomix/badge.svg?branch=master)](https://coveralls.io/github/smoketurner/dropwizard-atomix?branch=master)
 [![Maven Central](https://img.shields.io/maven-central/v/com.smoketurner.dropwizard/dropwizard-atomix.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/com.smoketurner.dropwizard/dropwizard-atomix/)
 [![GitHub license](https://img.shields.io/github/license/smoketurner/dropwizard-atomix.svg?style=flat-square)](https://github.com/smoketurner/dropwizard-atomix/tree/master)
 [![Become a Patron](https://img.shields.io/badge/Patron-Patreon-red.svg)](https://www.patreon.com/bePatron?u=9567343)
