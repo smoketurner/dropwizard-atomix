@@ -15,14 +15,10 @@
  */
 package com.smoketurner.dropwizard.atomix;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.atomix.cluster.Member;
-import io.atomix.core.Atomix;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
@@ -30,31 +26,49 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.atomix.cluster.ClusterConfig;
+import io.atomix.cluster.Member;
+import io.atomix.core.Atomix;
+import io.atomix.core.AtomixBuilder;
+import io.atomix.core.profile.ConsensusProfile;
+import io.atomix.core.profile.ConsensusProfileConfig;
+import io.atomix.core.profile.Profile;
 
 public class AtomixFactory {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(AtomixFactory.class);
   private final AtomicReference<Atomix> atomixRef = new AtomicReference<>();
 
-  /**
-   * Sets the cluster name
-   *
-   * @see {@link Atomix.Builder.DEFAULT_CLUSTER_NAME}
-   */
-  @NotEmpty private String clusterName = "atomix";
+  /** @see {@link ClusterConfig.DEFAULT_CLUSTER_NAME} */
+  @NotEmpty private String clusterId = "atomix";
 
   @Nullable private AtomixMember localMember;
 
   @NotNull private List<AtomixMember> members = Collections.emptyList();
 
+  /** @see {@link ConsensusProfileConfig.dataPath} */
+  @NotEmpty private String dataPath = ".data";
+
   @JsonProperty
-  public String getClusterName() {
-    return clusterName;
+  public String getClusterId() {
+    return clusterId;
   }
 
   @JsonProperty
-  public void setClusterName(String name) {
-    this.clusterName = name;
+  public void setClusterId(String id) {
+    this.clusterId = id;
+  }
+
+  @JsonProperty
+  public String getDataPath() {
+    return dataPath;
+  }
+
+  @JsonProperty
+  public void setDataPath(String path) {
+    this.dataPath = path;
   }
 
   @JsonProperty
@@ -68,8 +82,8 @@ public class AtomixFactory {
   }
 
   @JsonProperty
-  public Collection<Member> getMembers() {
-    return members.stream().map(n -> n.toMember()).collect(Collectors.toList());
+  public Set<String> getMembers() {
+    return members.stream().map(m -> m.getId()).collect(Collectors.toSet());
   }
 
   @JsonProperty
@@ -84,13 +98,24 @@ public class AtomixFactory {
       return existingAtomix;
     }
 
-    LOGGER.info("Atomix Cluster Name: {}", clusterName);
+    LOGGER.info("Atomix Cluster ID: {} (data path: {})", clusterId, dataPath);
 
-    final Atomix.Builder builder =
-        Atomix.builder().withClusterName(clusterName).withMembers(getMembers());
+    final Profile consensus =
+        ConsensusProfile.builder().setDataPath(dataPath).withMembers(getMembers()).build();
+
+    final AtomixBuilder builder =
+        Atomix.builder().withClusterId(clusterId).withProfiles(consensus, Profile.dataGrid());
 
     final Optional<Member> localMember = getLocalMember();
-    localMember.ifPresent(member -> builder.withLocalMember(member));
+    localMember.ifPresent(
+        member ->
+            builder
+                .withMemberId(member.id())
+                .withAddress(member.address())
+                .withHost(member.host())
+                .withProperties(member.properties())
+                .withZone(member.zone())
+                .withRack(member.rack()));
 
     final Atomix atomix = builder.build();
     if (atomixRef.compareAndSet(null, atomix)) {

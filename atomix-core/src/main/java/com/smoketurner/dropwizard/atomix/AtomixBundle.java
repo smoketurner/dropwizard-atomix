@@ -28,15 +28,15 @@ import javax.annotation.Nonnull;
 public abstract class AtomixBundle<C extends Configuration>
     implements ConfiguredBundle<C>, AtomixConfiguration<C> {
 
-  private final String clusterName;
+  private final String clusterId;
 
   /**
    * Constructor
    *
-   * @param clusterName Atomix cluster name
+   * @param clusterId Atomix cluster ID
    */
-  public AtomixBundle(@Nonnull final String clusterName) {
-    this.clusterName = Objects.requireNonNull(clusterName);
+  public AtomixBundle(@Nonnull final String clusterId) {
+    this.clusterId = Objects.requireNonNull(clusterId);
   }
 
   @Override
@@ -48,7 +48,7 @@ public abstract class AtomixBundle<C extends Configuration>
   public void run(final C configuration, final Environment environment) throws Exception {
 
     final AtomixFactory factory = getAtomixFactory(configuration);
-    factory.setClusterName(clusterName);
+    factory.setClusterId(clusterId);
 
     final Atomix atomix = factory.build();
     environment.lifecycle().manage(new AtomixManager(atomix));

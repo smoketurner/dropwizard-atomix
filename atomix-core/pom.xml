@@ -28,6 +28,10 @@
     <artifactId>atomix-core</artifactId>
     <name>Dropwizard Atomix Bundle</name>
 
+    <properties>
+        <atomix.version>3.0.0-rc3</atomix.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>
@@ -36,7 +40,22 @@
         <dependency>
             <groupId>io.atomix</groupId>
             <artifactId>atomix</artifactId>
-            <version>3.0.0-rc1</version>
+            <version>${atomix.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.atomix</groupId>
+            <artifactId>atomix-raft</artifactId>
+            <version>${atomix.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.atomix</groupId>
+            <artifactId>atomix-primary-backup</artifactId>
+            <version>${atomix.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.atomix</groupId>
+            <artifactId>atomix-gossip</artifactId>
+            <version>${atomix.version}</version>
         </dependency>
     </dependencies>
 </project>

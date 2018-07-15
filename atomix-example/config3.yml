@@ -22,6 +22,7 @@ atomix:
   localMember:
     id: node3
     address: 127.0.0.1:10002
+  dataPath: data3
   members:
     - id: node1
       address: 127.0.0.1:10000

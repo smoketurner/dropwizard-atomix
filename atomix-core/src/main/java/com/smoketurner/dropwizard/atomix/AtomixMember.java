@@ -15,6 +15,13 @@
  */
 package com.smoketurner.dropwizard.atomix;
 
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.UUID;
+import javax.annotation.concurrent.Immutable;
+import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.NotEmpty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,15 +30,10 @@ import com.google.common.net.HostAndPort;
 import io.atomix.cluster.Member;
 import io.atomix.cluster.MemberId;
 import io.atomix.utils.net.Address;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-import javax.annotation.concurrent.Immutable;
-import javax.validation.constraints.NotNull;
-import org.hibernate.validator.constraints.NotEmpty;
 
 @Immutable
 public final class AtomixMember {
+  /** @see {@link Address.DEFAULT_PORT} */
   private static final int DEFAULT_PORT = 5679;
 
   @NotEmpty private final String id;
@@ -44,18 +46,22 @@ public final class AtomixMember {
 
   @NotNull private final Optional<String> host;
 
+  @NotNull private final Optional<Properties> properties;
+
   @JsonCreator
   private AtomixMember(
       @JsonProperty("id") String id,
       @JsonProperty("address") HostAndPort address,
       @JsonProperty("zone") Optional<String> zone,
       @JsonProperty("rack") Optional<String> rack,
-      @JsonProperty("host") Optional<String> host) {
+      @JsonProperty("host") Optional<String> host,
+      @JsonProperty("properties") Optional<Properties> properties) {
     this.id = id;
     this.address = address;
     this.zone = zone;
     this.rack = rack;
     this.host = host;
+    this.properties = properties;
   }
 
   private AtomixMember(Builder builder) {
@@ -64,6 +70,7 @@ public final class AtomixMember {
     this.zone = builder.zone;
     this.rack = builder.rack;
     this.host = builder.host;
+    this.properties = builder.properties;
   }
 
   public static AtomixMember create() {
@@ -80,6 +87,7 @@ public final class AtomixMember {
     private Optional<String> zone = Optional.empty();
     private Optional<String> rack = Optional.empty();
     private Optional<String> host = Optional.empty();
+    private Optional<Properties> properties = Optional.empty();
 
     public Builder fromMember(Member member) {
       withId(member.id());
@@ -87,6 +95,7 @@ public final class AtomixMember {
       withZone(member.zone());
       withRack(member.rack());
       withHost(member.host());
+      withProperties(member.properties());
       return this;
     }
 
@@ -130,6 +139,11 @@ public final class AtomixMember {
       return this;
     }
 
+    public Builder withProperties(Properties properties) {
+      this.properties = Optional.ofNullable(properties);
+      return this;
+    }
+
     public AtomixMember build() {
       return new AtomixMember(this);
     }
@@ -160,6 +174,11 @@ public final class AtomixMember {
     return host;
   }
 
+  @JsonProperty
+  public Optional<Properties> getProperties() {
+    return properties;
+  }
+
   @JsonIgnore
   public Member toMember() {
     return Member.builder(id)
@@ -167,6 +186,7 @@ public final class AtomixMember {
         .withZone(zone.orElse(null))
         .withRack(rack.orElse(null))
         .withHost(host.orElse(null))
+        .withProperties(properties.orElse(null))
         .build();
   }
 
@@ -196,6 +216,7 @@ public final class AtomixMember {
         .add("zone", zone)
         .add("rack", rack)
         .add("host", host)
+        .add("properties", properties)
         .toString();
   }
 }
