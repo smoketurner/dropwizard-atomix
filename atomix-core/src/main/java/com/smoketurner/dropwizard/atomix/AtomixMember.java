@@ -15,6 +15,15 @@
  */
 package com.smoketurner.dropwizard.atomix;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
+import com.google.common.net.HostAndPort;
+import io.atomix.cluster.Member;
+import io.atomix.cluster.MemberBuilder;
+import io.atomix.cluster.MemberId;
+import io.atomix.utils.net.Address;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
@@ -22,14 +31,6 @@ import java.util.UUID;
 import javax.annotation.concurrent.Immutable;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.MoreObjects;
-import com.google.common.net.HostAndPort;
-import io.atomix.cluster.Member;
-import io.atomix.cluster.MemberId;
-import io.atomix.utils.net.Address;
 
 @Immutable
 public final class AtomixMember {
@@ -181,13 +182,13 @@ public final class AtomixMember {
 
   @JsonIgnore
   public Member toMember() {
-    return Member.builder(id)
-        .withAddress(Address.from(address.getHost(), address.getPort()))
-        .withZone(zone.orElse(null))
-        .withRack(rack.orElse(null))
-        .withHost(host.orElse(null))
-        .withProperties(properties.orElse(null))
-        .build();
+    final MemberBuilder builder =
+        Member.builder(id).withAddress(address.getHost(), address.getPort());
+    zone.ifPresent(zone -> builder.withZone(zone));
+    rack.ifPresent(rack -> builder.withRack(rack));
+    host.ifPresent(host -> builder.withHost(host));
+    properties.ifPresent(properties -> builder.withProperties(properties));
+    return builder.build();
   }
 
   @Override

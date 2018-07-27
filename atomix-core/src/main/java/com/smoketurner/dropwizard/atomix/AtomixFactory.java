@@ -15,6 +15,15 @@
  */
 package com.smoketurner.dropwizard.atomix;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.atomix.cluster.Member;
+import io.atomix.cluster.Node;
+import io.atomix.cluster.discovery.BootstrapDiscoveryProvider;
+import io.atomix.core.Atomix;
+import io.atomix.core.AtomixBuilder;
+import io.atomix.core.profile.ConsensusProfile;
+import io.atomix.core.profile.Profile;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -26,15 +35,6 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.atomix.cluster.ClusterConfig;
-import io.atomix.cluster.Member;
-import io.atomix.core.Atomix;
-import io.atomix.core.AtomixBuilder;
-import io.atomix.core.profile.ConsensusProfile;
-import io.atomix.core.profile.ConsensusProfileConfig;
-import io.atomix.core.profile.Profile;
 
 public class AtomixFactory {
 
@@ -81,9 +81,14 @@ public class AtomixFactory {
     this.localMember = member;
   }
 
-  @JsonProperty
-  public Set<String> getMembers() {
+  @JsonIgnore
+  public Set<String> getMemberIds() {
     return members.stream().map(m -> m.getId()).collect(Collectors.toSet());
+  }
+
+  @JsonProperty
+  public Set<Node> getMembers() {
+    return members.stream().map(m -> m.toMember()).collect(Collectors.toSet());
   }
 
   @JsonProperty
@@ -101,10 +106,16 @@ public class AtomixFactory {
     LOGGER.info("Atomix Cluster ID: {} (data path: {})", clusterId, dataPath);
 
     final Profile consensus =
-        ConsensusProfile.builder().setDataPath(dataPath).withMembers(getMembers()).build();
+        ConsensusProfile.builder().setDataPath(dataPath).withMembers(getMemberIds()).build();
 
     final AtomixBuilder builder =
-        Atomix.builder().withClusterId(clusterId).withProfiles(consensus, Profile.dataGrid());
+        Atomix.builder()
+            .withClusterId(clusterId)
+            .withProfiles(consensus) // , Profile.dataGrid())
+            .withMulticastEnabled(false)
+            .withShutdownHook(false)
+            .withMembershipProvider(
+                BootstrapDiscoveryProvider.builder().withNodes(getMembers()).build());
 
     final Optional<Member> localMember = getLocalMember();
     localMember.ifPresent(
