@@ -14,8 +14,8 @@
 # limitations under the License.
 #
 
-template: ${helloworld/template:-Hello, %s!}
-defaultName: ${helloworld/defaultName:-Stranger}
+template: Hello, %s!
+defaultName: Stranger
 
 # Atomix-specific options.
 atomix:

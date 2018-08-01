@@ -20,6 +20,8 @@ import com.example.helloworld.api.Saying;
 import com.smoketurner.dropwizard.atomix.AtomixMember;
 import io.atomix.core.Atomix;
 import io.atomix.core.counter.AtomicCounter;
+import io.atomix.protocols.raft.MultiRaftProtocol;
+import io.atomix.protocols.raft.ReadConsistency;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -54,7 +56,14 @@ public class HelloWorldResource {
   @Timed
   @Path("/hello-world")
   public Saying sayHello(@QueryParam("name") Optional<String> name) {
-    final AtomicCounter counter = atomix.atomicCounterBuilder("counter").build();
+    final AtomicCounter counter =
+        atomix
+            .atomicCounterBuilder("counter")
+            .withProtocol(
+                MultiRaftProtocol.builder()
+                    .withReadConsistency(ReadConsistency.LINEARIZABLE)
+                    .build())
+            .build();
 
     final String value = String.format(template, name.orElse(defaultName));
     return new Saying(counter.incrementAndGet(), value);

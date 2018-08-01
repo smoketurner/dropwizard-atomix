@@ -106,12 +106,12 @@ public class AtomixFactory {
     LOGGER.info("Atomix Cluster ID: {} (data path: {})", clusterId, dataPath);
 
     final Profile consensus =
-        ConsensusProfile.builder().setDataPath(dataPath).withMembers(getMemberIds()).build();
+        ConsensusProfile.builder().withDataPath(dataPath).withMembers(getMemberIds()).build();
 
     final AtomixBuilder builder =
         Atomix.builder()
             .withClusterId(clusterId)
-            .withProfiles(consensus) // , Profile.dataGrid())
+            .withProfiles(consensus, Profile.dataGrid())
             .withMulticastEnabled(false)
             .withShutdownHook(false)
             .withMembershipProvider(
