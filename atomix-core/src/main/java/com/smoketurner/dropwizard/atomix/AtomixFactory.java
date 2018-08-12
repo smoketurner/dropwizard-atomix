@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.atomix.cluster.Member;
 import io.atomix.cluster.Node;
 import io.atomix.cluster.discovery.BootstrapDiscoveryProvider;
+import io.atomix.cluster.discovery.NodeDiscoveryProvider;
 import io.atomix.core.Atomix;
 import io.atomix.core.AtomixBuilder;
 import io.atomix.core.profile.ConsensusProfile;
@@ -49,7 +50,7 @@ public class AtomixFactory {
   @NotNull private List<AtomixMember> members = Collections.emptyList();
 
   /** @see {@link ConsensusProfileConfig.dataPath} */
-  @NotEmpty private String dataPath = ".data";
+  @NotEmpty private String dataPath = System.getProperty("atomix.data", ".data");
 
   @JsonProperty
   public String getClusterId() {
@@ -108,14 +109,16 @@ public class AtomixFactory {
     final Profile consensus =
         ConsensusProfile.builder().withDataPath(dataPath).withMembers(getMemberIds()).build();
 
+    final NodeDiscoveryProvider locationProvider =
+        BootstrapDiscoveryProvider.builder().withNodes(getMembers()).build();
+
     final AtomixBuilder builder =
         Atomix.builder()
             .withClusterId(clusterId)
             .withProfiles(consensus, Profile.dataGrid())
             .withMulticastEnabled(false)
             .withShutdownHook(false)
-            .withMembershipProvider(
-                BootstrapDiscoveryProvider.builder().withNodes(getMembers()).build());
+            .withMembershipProvider(locationProvider);
 
     final Optional<Member> localMember = getLocalMember();
     localMember.ifPresent(

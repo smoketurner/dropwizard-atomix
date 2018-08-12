@@ -29,7 +29,7 @@
     <name>Dropwizard Atomix Bundle</name>
 
     <properties>
-        <atomix.version>3.0.0-rc8</atomix.version>
+        <atomix.version>3.0.0-rc11</atomix.version>
     </properties>
 
     <dependencies>
