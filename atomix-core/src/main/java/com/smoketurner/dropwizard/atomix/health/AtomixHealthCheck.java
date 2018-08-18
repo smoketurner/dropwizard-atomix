@@ -16,38 +16,31 @@
 package com.smoketurner.dropwizard.atomix.health;
 
 import com.codahale.metrics.health.HealthCheck;
+import io.atomix.cluster.Member;
 import io.atomix.core.Atomix;
-import io.dropwizard.util.Duration;
 import java.util.Objects;
+import java.util.Set;
 import javax.annotation.Nonnull;
 
 public class AtomixHealthCheck extends HealthCheck {
 
   private final Atomix atomix;
-  private final Duration timeout;
-
-  /**
-   * Constructor with a default ping timeout of 1 second
-   *
-   * @param atomix Atomix instance
-   */
-  public AtomixHealthCheck(@Nonnull final Atomix atomix) {
-    this(atomix, Duration.seconds(1));
-  }
 
   /**
    * Constructor
    *
    * @param atomix Atomix instance
-   * @param timeout Ping timeout
    */
-  public AtomixHealthCheck(@Nonnull final Atomix atomix, @Nonnull final Duration timeout) {
+  public AtomixHealthCheck(@Nonnull final Atomix atomix) {
     this.atomix = Objects.requireNonNull(atomix);
-    this.timeout = Objects.requireNonNull(timeout);
   }
 
   @Override
   protected Result check() throws Exception {
-    return Result.healthy("Atomix is healthly");
+    final Set<Member> members = atomix.getMembershipService().getReachableMembers();
+    if (members.size() > 0) {
+      return Result.healthy(String.format("Cluster is healthly (%d members)", members.size()));
+    }
+    return Result.unhealthy("No reachable members found");
   }
 }
