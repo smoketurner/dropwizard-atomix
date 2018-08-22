@@ -19,7 +19,7 @@ import io.atomix.core.Atomix;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.util.Duration;
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +33,7 @@ public class AtomixManager implements Managed {
    *
    * @param atomix Atomix instance to manage
    */
-  public AtomixManager(@Nonnull final Atomix atomix) {
+  public AtomixManager(@NotNull final Atomix atomix) {
     this.atomix = Objects.requireNonNull(atomix);
   }
 

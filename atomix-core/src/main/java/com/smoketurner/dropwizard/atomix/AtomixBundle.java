@@ -23,7 +23,7 @@ import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class AtomixBundle<C extends Configuration>
     implements ConfiguredBundle<C>, AtomixConfiguration<C> {
@@ -35,7 +35,7 @@ public abstract class AtomixBundle<C extends Configuration>
    *
    * @param clusterId Atomix cluster ID
    */
-  public AtomixBundle(@Nonnull final String clusterId) {
+  public AtomixBundle(@NotNull final String clusterId) {
     this.clusterId = Objects.requireNonNull(clusterId);
   }
 

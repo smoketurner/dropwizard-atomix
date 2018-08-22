@@ -20,7 +20,7 @@ import io.atomix.cluster.Member;
 import io.atomix.core.Atomix;
 import java.util.Objects;
 import java.util.Set;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class AtomixHealthCheck extends HealthCheck {
 
@@ -31,7 +31,7 @@ public class AtomixHealthCheck extends HealthCheck {
    *
    * @param atomix Atomix instance
    */
-  public AtomixHealthCheck(@Nonnull final Atomix atomix) {
+  public AtomixHealthCheck(@NotNull final Atomix atomix) {
     this.atomix = Objects.requireNonNull(atomix);
   }
 
