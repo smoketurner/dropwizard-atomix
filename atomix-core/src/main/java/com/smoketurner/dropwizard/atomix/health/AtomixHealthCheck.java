@@ -15,12 +15,11 @@
  */
 package com.smoketurner.dropwizard.atomix.health;
 
+import java.util.Objects;
+import java.util.Set;
 import com.codahale.metrics.health.HealthCheck;
 import io.atomix.cluster.Member;
 import io.atomix.core.Atomix;
-import java.util.Objects;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
 
 public class AtomixHealthCheck extends HealthCheck {
 
@@ -31,7 +30,7 @@ public class AtomixHealthCheck extends HealthCheck {
    *
    * @param atomix Atomix instance
    */
-  public AtomixHealthCheck(@NotNull final Atomix atomix) {
+  public AtomixHealthCheck(final Atomix atomix) {
     this.atomix = Objects.requireNonNull(atomix);
   }
 

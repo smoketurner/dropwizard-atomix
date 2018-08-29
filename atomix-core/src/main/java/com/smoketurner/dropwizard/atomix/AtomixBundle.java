@@ -15,6 +15,7 @@
  */
 package com.smoketurner.dropwizard.atomix;
 
+import java.util.Objects;
 import com.smoketurner.dropwizard.atomix.health.AtomixHealthCheck;
 import com.smoketurner.dropwizard.atomix.managed.AtomixManager;
 import io.atomix.core.Atomix;
@@ -22,8 +23,6 @@ import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import java.util.Objects;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class AtomixBundle<C extends Configuration>
     implements ConfiguredBundle<C>, AtomixConfiguration<C> {
@@ -35,7 +34,7 @@ public abstract class AtomixBundle<C extends Configuration>
    *
    * @param clusterId Atomix cluster ID
    */
-  public AtomixBundle(@NotNull final String clusterId) {
+  public AtomixBundle(final String clusterId) {
     this.clusterId = Objects.requireNonNull(clusterId);
   }
 
