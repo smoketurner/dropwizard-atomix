@@ -15,12 +15,12 @@
  */
 package com.smoketurner.dropwizard.atomix.managed;
 
-import java.util.Objects;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import io.atomix.core.Atomix;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.util.Duration;
+import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AtomixManager implements Managed {
 

@@ -15,6 +15,17 @@
  */
 package com.smoketurner.dropwizard.atomix;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import io.atomix.cluster.Member;
+import io.atomix.cluster.Node;
+import io.atomix.cluster.discovery.BootstrapDiscoveryProvider;
+import io.atomix.cluster.discovery.NodeDiscoveryProvider;
+import io.atomix.core.Atomix;
+import io.atomix.core.AtomixBuilder;
+import io.atomix.core.profile.ConsensusProfile;
+import io.atomix.core.profile.Profile;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -25,19 +36,6 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import edu.umd.cs.findbugs.annotations.Nullable;
-import io.atomix.cluster.ClusterConfig;
-import io.atomix.cluster.Member;
-import io.atomix.cluster.Node;
-import io.atomix.cluster.discovery.BootstrapDiscoveryProvider;
-import io.atomix.cluster.discovery.NodeDiscoveryProvider;
-import io.atomix.core.Atomix;
-import io.atomix.core.AtomixBuilder;
-import io.atomix.core.profile.ConsensusProfile;
-import io.atomix.core.profile.ConsensusProfileConfig;
-import io.atomix.core.profile.Profile;
 
 public class AtomixFactory {
 

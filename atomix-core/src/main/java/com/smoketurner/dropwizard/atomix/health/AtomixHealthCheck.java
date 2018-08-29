@@ -15,11 +15,11 @@
  */
 package com.smoketurner.dropwizard.atomix.health;
 
-import java.util.Objects;
-import java.util.Set;
 import com.codahale.metrics.health.HealthCheck;
 import io.atomix.cluster.Member;
 import io.atomix.core.Atomix;
+import java.util.Objects;
+import java.util.Set;
 
 public class AtomixHealthCheck extends HealthCheck {
 
