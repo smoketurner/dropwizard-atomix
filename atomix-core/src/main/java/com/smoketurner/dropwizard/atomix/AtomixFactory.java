@@ -17,7 +17,6 @@ package com.smoketurner.dropwizard.atomix;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import io.atomix.cluster.Member;
 import io.atomix.cluster.Node;
 import io.atomix.cluster.discovery.BootstrapDiscoveryProvider;
@@ -32,6 +31,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
