@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Smoke Turner, LLC (contact@smoketurner.com)
+ * Copyright © 2019 Smoke Turner, LLC (github@smoketurner.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,10 +73,7 @@ public class HelloWorldResource {
   @Timed
   @Path("/members")
   public List<AtomixMember> getMembers() {
-    return atomix
-        .getMembershipService()
-        .getMembers()
-        .stream()
+    return atomix.getMembershipService().getMembers().stream()
         .map(m -> AtomixMember.builder().fromMember(m).build())
         .collect(Collectors.toList());
   }
